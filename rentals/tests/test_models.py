@@ -9,14 +9,24 @@ class BookTest(TestCase):
             title="Becoming", genre="fiction")
         Book.objects.create(
             title='audacity of hope',  genre="novel")
+        Book.objects.create(
+            title='dreams from africa',  genre="regular")
 
     def test_book_title(self):
         book = Book.objects.get(title="Becoming")
         self.assertEqual(book.__str__(), "Becoming")
     
-    def test_cost_perday(self):
+    def test_cost_perday_novel(self):
+        book = Book.objects.get(title="audacity of hope")
+        self.assertEqual(book.cost_perday, 1.5)
+    
+    def test_cost_perday_fiction(self):
         book = Book.objects.get(title="Becoming")
-        self.assertEqual(book.cost_perday, 1)
+        self.assertEqual(book.cost_perday, 3)
+    
+    def test_cost_perday_regular(self):
+        book = Book.objects.get(title="dreams from africa")
+        self.assertEqual(book.cost_perday, 1.5)
 
 class CustomerTest(TestCase):
     """ Test module for Puppy model """
@@ -49,7 +59,7 @@ class CustomerBookTest(TestCase):
     
     def test_rental_charges_with_date_defaults(self):
         duration = self.customer_book.due_date - self.customer_book.borrowed_date
-        self.assertEqual(self.customer_book.rental_charges, duration * 1)
+        self.assertEqual(self.customer_book.rental_charges, duration * self.customer_book.book.cost_perday)
 
     
 
