@@ -63,7 +63,6 @@ class CustomerBook(models.Model):
 
     objects = BookManager()
 
-
     def save(self, *args, **kwargs):
         if not self.due_date:
             if not self.borrowed_date:
@@ -73,8 +72,6 @@ class CustomerBook(models.Model):
         else:
             self.due_date = parser.parse(str(self.due_date)).date()
         super(CustomerBook, self).save(*args, **kwargs)
-
-
 
     @property
     def rental_charges(self):
