@@ -66,11 +66,22 @@ def checkout(request):
     user_obj = get_object_or_404(Customer, id=user)
     cost_per_book = []
     for book in books:
-        book_obj = get_object_or_404(Book, id=book['book'])
-        new_item = CustomerBook(
-            customer=user_obj,
-            book=book_obj
-        )
-        new_item.save()
-        cost_per_book.append(int(str(new_item.rental_charges).split()[0]))
+        if 'due_date' in book:
+            due_date = book['due_date']
+            book_obj = get_object_or_404(Book, id=book['book'])
+            new_item = CustomerBook(
+                customer=user_obj,
+                book=book_obj,
+               due_date=due_date
+            )
+            new_item.save()
+            cost_per_book.append(new_item.rental_charges)
+        else:
+            book_obj = get_object_or_404(Book, id=book['book'])
+            new_item = CustomerBook(
+                customer=user_obj,
+                book=book_obj,
+            )
+            new_item.save()
+            cost_per_book.append(new_item.rental_charges)
     return Response({"Customer rental charges": sum(cost_per_book)})

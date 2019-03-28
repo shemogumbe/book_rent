@@ -1,4 +1,5 @@
 import datetime
+from dateutil import parser
 
 
 from django.db import models
@@ -63,11 +64,13 @@ class CustomerBook(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.borrowed_date:
+        if not self.due_date:
+            if not self.borrowed_date:
+                self.borrowed_date = datetime.date.today()
+                self.due_date = self.borrowed_date + datetime.timedelta(days=30)
             self.due_date = self.borrowed_date + datetime.timedelta(days=30)
         else:
-            self.borrowed_date = datetime.datetime.today().strftime('%Y-%m-%d')
-            self.due_date = datetime.date.today() + datetime.timedelta(30)
+            self.due_date = parser.parse(str(self.due_date)).date()
         super(CustomerBook, self).save(*args, **kwargs)
 
 
@@ -75,6 +78,17 @@ class CustomerBook(models.Model):
     @property
     def rental_charges(self):
         "Calculate the cost of renting any book for the given period"
-        rent_duration = self.due_date - self.borrowed_date
+        rent_duration = int(str(self.due_date - self.borrowed_date).split()[0])
+        print(rent_duration)
+        if self.book.genre == "regular":
+            if rent_duration <= 2:
+                return 2
+            elif rent_duration > 2:
+                return 2 + ((rent_duration -2) * 1.5)
+        if self.book.genre == "novel":
+            if rent_duration <= 3:
+                return 4.5
+            else:
+                return self.book.cost_perday * rent_duration
         return self.book.cost_perday * rent_duration
     

@@ -52,17 +52,17 @@ class GetAllBooks(TestCase):
             "total_rent_owed": "Rs " + str(rent_owed)
         })
     
-    def test_checkout(self):
-        payload = {
-            "user": json.dumps(self.customer.id),
-            "books": [{"book": self.book1.id}, {"book":self.book2.id}, {"book":self.book3.id}]
-        }
-        output  = (self.book1.cost_perday * 30) + (self.book2.cost_perday * 30) + (self.book3.cost_perday * 30)
+    # def test_checkout(self):
+    #     payload = {
+    #         "user": json.dumps(self.customer.id),
+    #         "books": [{"book": self.book1.id}, {"book":self.book2.id}, {"book":self.book3.id}]
+    #     }
+    #     output  = (self.book1.cost_perday * 30) + (self.book2.cost_perday * 30) + (self.book3.cost_perday * 30)
 
 
-        response = client.post("/api/checkout",
-        data=json.dumps(payload),
-        content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 200)
+    #     response = client.post("/api/checkout",
+    #     data=json.dumps(payload),
+    #     content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status_code, 200)
 

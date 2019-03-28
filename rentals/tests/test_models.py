@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 from ..models import Book, Customer, CustomerBook
 
@@ -46,21 +48,69 @@ class CustomerBookTest(TestCase):
     def setUp(self):
         self.customer = Customer.objects.create(
             first_name="Shem", last_name="Ogumbe")
-        self.book = Book.objects.create(
-            title="Becoming", genre="fiction")
-        self.customer_book = CustomerBook.objects.create(
+        self.book1 = Book.objects.create(
+            title="Becoming", genre="novel")
+        self.book2 = Book.objects.create(
+            title="Becoming two", genre="regular")
+        # model default for genre is fiction
+        self.book3 = Book.objects.create(
+            title="Becoming three")
+        self.customer_book1 = CustomerBook.objects.create(
             customer=self.customer,
-            book=self.book
+            book=self.book1
+            )
+        self.customer_book2 = CustomerBook.objects.create(
+            customer=self.customer,
+            book=self.book2
+            )
+        self.customer_book3 = CustomerBook.objects.create(
+            customer=self.customer,
+            book=self.book3
             )
 
     def test_customer_rent_book(self):
 
-        self.assertTrue(isinstance(self.customer_book, CustomerBook))
+        self.assertTrue(isinstance(self.customer_book1, CustomerBook))
     
-    def test_rental_charges_with_date_defaults(self):
-        duration = self.customer_book.due_date - self.customer_book.borrowed_date
-        self.assertEqual(self.customer_book.rental_charges, duration * self.customer_book.book.cost_perday)
+    def test_rental_charges_regular(self):
+        # default rent duration is 30 days
+        regular_charges_30_days = 2 + (28 * 1.5)
+        self.assertEqual(self.customer_book2.rental_charges, regular_charges_30_days)
+    
+    def test_rental_charges_novel_base_charge(self):
+        # default charges within first 3 days
+        customer_book = CustomerBook.objects.create(
+            customer=self.customer,
+            book=self.book1,
+            borrowed_date=datetime.date.today(),
+            due_date=datetime.date.today() + datetime.timedelta(days=2)
+            )
+        self.assertEqual(customer_book.rental_charges, 4.5)
+    
+    def test_rental_charges_regular_base_charge(self):
+        # default charges within first 2 days
+        customer_book = CustomerBook.objects.create(
+            customer=self.customer,
+            book=self.book2,
+            borrowed_date=datetime.date.today(),
+            due_date=datetime.date.today() + datetime.timedelta(days=2)
+            )
+        self.assertEqual(customer_book.rental_charges, 2)
+    
+    def test_rental_charges_novel(self):
+        # default rent duration is 30 days
+        novel_charges_30_days = self.book1.cost_perday * 30
+        self.assertEqual(self.customer_book1.rental_charges, novel_charges_30_days)
+    
+
+    def test_rental_charges_fiction(self):
+        # default rent duration is 30 days
+        novel_charges_30_days = self.book3.cost_perday * 30
+        self.assertEqual(self.customer_book3.rental_charges, novel_charges_30_days)
+    
+    
 
     
+
 
 
