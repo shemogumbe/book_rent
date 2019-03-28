@@ -37,7 +37,11 @@ class Book(models.Model):
     @property
     def cost_perday(self):
         "sets the cost of each book per day to Rs 1"
-        return 1
+        if self.genre == "fiction":
+            return 3
+        elif self.genre == "novel" or self.genre == "regular":
+            return 1.5
+
 
 
 class Customer(models.Model):
