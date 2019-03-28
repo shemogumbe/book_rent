@@ -1,5 +1,7 @@
 import datetime
 
+from dateutil import parser
+
 
 from django.db import models
 
@@ -63,11 +65,13 @@ class CustomerBook(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.borrowed_date:
+        if not self.due_date:
+            if not self.borrowed_date:
+                self.borrowed_date = datetime.date.today()
+                self.due_date = self.borrowed_date + datetime.timedelta(days=30)
             self.due_date = self.borrowed_date + datetime.timedelta(days=30)
         else:
-            self.borrowed_date = datetime.datetime.today().strftime('%Y-%m-%d')
-            self.due_date = datetime.date.today() + datetime.timedelta(30)
+            self.due_date = parser.parse(str(self.due_date)).date()
         super(CustomerBook, self).save(*args, **kwargs)
 
 
