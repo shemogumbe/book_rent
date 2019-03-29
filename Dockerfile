@@ -1,9 +1,19 @@
 FROM python:3
+
 ENV PYTHONUNBUFFERED 1
+
 WORKDIR $HOME/app
+
 COPY requirements.txt ./
+
 RUN pip install -r requirements.txt
-EXPOSE 8000
 COPY ./ ./
 
-CMD python manage.py runserver 8000
+RUN chmod +x ./app-start.sh
+
+EXPOSE 8000
+ENTRYPOINT ["./app-start.sh"]
+
+
+RUN chmod +x ./app-start.sh
+
