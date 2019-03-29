@@ -11,7 +11,7 @@
       "Ports": [
         {
             "ContainerPort": 8000,
-            "HostPort": 8000
+            "HostPort": 80
        }   
       ],
       "Volumes": []
