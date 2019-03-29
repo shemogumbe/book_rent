@@ -27,7 +27,7 @@ deploy:
     provider: elasticbeanstalk
     region: us-west-2
     app:  bookreceipt
-    env: bookreceipt-env
+    env: bookreceipt-env1
     bucket_name: elasticbeanstalk-us-west-2-740290758360
     bucket_path: bookreceipt
     on:
