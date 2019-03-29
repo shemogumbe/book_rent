@@ -1,0 +1,18 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "authentication": {
+        "Bucket": "shem-devops",
+        "KEY": "dockercfg"
+    },
+    "Image": {
+        "Name": "shemogumbe/bookreceipt",
+        "Update": "true"
+      },
+      "Ports": [
+        {
+            "ContainerPort": 8000,
+            "HostPort": 8000
+       }   
+      ],
+      "Volumes": []
+}

@@ -1,9 +1,14 @@
 sudo: required
 language: python
-node_js:
-  - "3"
+python:
+  - "3.6"
+
 services:
   - docker
+
+install:
+  - pip install -r requirements.txt
+
 
 script:
     - echo "skipping tests"
@@ -33,3 +38,5 @@ deploy:
 
 after_deploy:
   - docker run $DOCKER_ID/bookreceipt python manage.py migrate
+  - docker run $DOCKER_ID/bookreceipt python manage.py runserver
+
