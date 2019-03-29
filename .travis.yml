@@ -1,0 +1,35 @@
+sudo: required
+language: python
+node_js:
+  - "3"
+services:
+  - docker
+
+script:
+    - echo "skipping tests"
+
+
+before_deploy:
+    
+   #  build server
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    - docker build -t bookreceipt -f ./Dockerfile .
+    - docker images
+    - docker tag  bookreceipt $DOCKER_ID/bookreceipt
+    - docker push $DOCKER_ID/bookreceipt
+    
+deploy:
+    provider: elasticbeanstalk
+    region: us-west-2
+    app:  bookreceipt
+    env: bookreceipt-env
+    bucket_name: elasticbeanstalk-us-west-2-740290758360
+    bucket_path: bookreceipt
+    on:
+       branch: t-3-introduce-base-charges
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key:
+        secure: $AWS_SECRET_KEY
+
+after_deploy:
+  - docker run $DOCKER_ID/bookreceipt python manage.py migrate
